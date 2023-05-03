@@ -11,7 +11,7 @@ import ru.pxlhack.genrenatorTelegramBot.config.BotConfig;
 
 @Component
 @Slf4j
-public class TelegramBot extends TelegramLongPollingBot{
+public class TelegramBot extends TelegramLongPollingBot {
     private final BotConfig botConfig;
 
     public TelegramBot(BotConfig botConfig) {
@@ -45,9 +45,18 @@ public class TelegramBot extends TelegramLongPollingBot{
                 startCommandReceived(chatId, userName);
                 break;
             }
+
+            case "/genre": {
+                genreCommandReceived(chatId);
+                break;
+            }
         }
     }
 
+    private void genreCommandReceived(long chatId) {
+        String genre = GenrenatorService.getGenre();
+        sendMessage(chatId, genre);
+    }
 
 
     private void startCommandReceived(Long chatId, String name) {
