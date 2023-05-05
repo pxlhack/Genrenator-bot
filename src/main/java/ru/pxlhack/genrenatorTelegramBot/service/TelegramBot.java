@@ -3,10 +3,18 @@ package ru.pxlhack.genrenatorTelegramBot.service;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
+import org.telegram.telegrambots.meta.api.methods.AnswerInlineQuery;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.api.objects.inlinequery.InlineQuery;
+import org.telegram.telegrambots.meta.api.objects.inlinequery.inputmessagecontent.InputTextMessageContent;
+import org.telegram.telegrambots.meta.api.objects.inlinequery.result.InlineQueryResult;
+import org.telegram.telegrambots.meta.api.objects.inlinequery.result.InlineQueryResultArticle;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import ru.pxlhack.genrenatorTelegramBot.config.BotConfig;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 @Component
@@ -37,7 +45,34 @@ public class TelegramBot extends TelegramLongPollingBot {
             String userName = update.getMessage().getChat().getFirstName();
             botAnswerUtils(messageText, chatId, userName);
         }
+
+        if (update.hasInlineQuery()) {
+            InlineQuery inlineQuery = update.getInlineQuery();
+
+            String genre = GenrenatorService.getGenre();
+
+            InlineQueryResultArticle result = new InlineQueryResultArticle();
+            result.setId("1");
+            result.setTitle("Genrenator");
+            result.setDescription("Here is your genre:");
+            result.setInputMessageContent(new InputTextMessageContent(genre));
+
+            List<InlineQueryResult> resultList = new ArrayList<>();
+            resultList.add(result);
+
+            AnswerInlineQuery answerInlineQuery = new AnswerInlineQuery();
+            answerInlineQuery.setInlineQueryId(inlineQuery.getId());
+            answerInlineQuery.setResults(resultList);
+            answerInlineQuery.setCacheTime(0);
+
+            try {
+                execute(answerInlineQuery);
+            } catch (TelegramApiException e) {
+                e.printStackTrace();
+            }
+        }
     }
+
 
     private void botAnswerUtils(String receivedMessageText, long chatId, String userName) {
         switch (receivedMessageText) {
