@@ -76,11 +76,6 @@ public class TelegramBot extends TelegramLongPollingBot {
 
     private void botAnswerUtils(String receivedMessageText, long chatId, String userName) {
         switch (receivedMessageText) {
-            case "/start": {
-                startCommandReceived(chatId, userName);
-                break;
-            }
-
             case "/genre": {
                 genreCommandReceived(chatId);
                 break;
@@ -93,11 +88,6 @@ public class TelegramBot extends TelegramLongPollingBot {
         sendMessage(chatId, genre);
     }
 
-
-    private void startCommandReceived(Long chatId, String name) {
-        String answer = "Hello, " + name + "!";
-        sendMessage(chatId, answer);
-    }
 
     private void sendMessage(Long chatId, String textToSend) {
         SendMessage sendMessage = new SendMessage();
